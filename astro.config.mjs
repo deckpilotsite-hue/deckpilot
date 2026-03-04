@@ -8,6 +8,7 @@ import sitemap from '@astrojs/sitemap';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://deckpilot.app',
+  output: 'static',
 
   vite: {
     plugins: [tailwindcss()]
