@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+/* Class-based dark mode per doc/design (add class="dark" to html) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Design tokens from doc/design (desktop + mobile) */
+@theme {
+  --color-primary: #4848e5;
+  --color-background-light: #f6f6f8;
+  --color-background-dark: #111121;
+  --font-display: "Inter", sans-serif;
+  --radius: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-full: 9999px;
+}

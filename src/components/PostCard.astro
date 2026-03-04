@@ -1,0 +1,19 @@
+---
+type Props = {
+  title: string;
+  href: string;
+  description?: string;
+  /** Optional date string to show. */
+  date?: string;
+};
+
+const { title, href, description, date } = Astro.props;
+---
+
+<article class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50 p-5 shadow-sm hover:shadow-md transition-shadow">
+  <a href={href} class="block group">
+    <h3 class="font-bold text-lg text-slate-900 dark:text-white group-hover:text-[#4848e5] transition-colors">{title}</h3>
+    {date && <time class="text-xs text-slate-500 dark:text-slate-500 mt-1 block">{date}</time>}
+    {description && <p class="text-sm text-slate-600 dark:text-slate-400 mt-2 line-clamp-2">{description}</p>}
+  </a>
+</article>

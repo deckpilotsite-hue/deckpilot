@@ -1,0 +1,14 @@
+---
+type FaqItem = { q: string; a: string };
+type Props = { items: FaqItem[] };
+const { items } = Astro.props;
+---
+
+<dl class="space-y-4">
+  {items.map((item) => (
+    <div class="border-b border-slate-200 dark:border-slate-800 pb-4 last:border-0">
+      <dt class="font-semibold text-slate-900 dark:text-white mb-1">{item.q}</dt>
+      <dd class="text-slate-600 dark:text-slate-400 text-sm">{item.a}</dd>
+    </div>
+  ))}
+</dl>

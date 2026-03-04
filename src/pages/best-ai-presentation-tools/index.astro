@@ -1,0 +1,147 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import RatingStars from '../../components/RatingStars.astro';
+import CTAButton from '../../components/CTAButton.astro';
+import ComparisonTable from '../../components/ComparisonTable.astro';
+import FAQ from '../../components/FAQ.astro';
+import AffiliateDisclosureInline from '../../components/AffiliateDisclosureInline.astro';
+import { getEntry } from 'astro:content';
+import { getToolsByKeys } from '../../data/tools';
+
+const entry = await getEntry('best', 'best-ai-presentation-tools');
+if (!entry) {
+  return Astro.redirect('/404');
+}
+const { title, featuredTools, updatedAt } = entry.data;
+const seoTitle = entry.data.seo?.title ?? title;
+const seoDesc = entry.data.seo?.description ?? undefined;
+const toolsList = getToolsByKeys(featuredTools);
+const tableHeaders = ['Tool', 'Pricing', 'Best for'];
+const tableRows = toolsList.map((t) => [t.name, t.pricingText, t.shortDesc]);
+const faqItems = [
+  { q: 'How do you pick the best tools?', a: 'We test each tool and rank by ease of use, value, and output quality.' },
+  { q: 'Do you earn from recommendations?', a: 'We may earn a commission when you sign up through our links. See our affiliate disclosure.' },
+];
+const breadcrumbItems = [
+  { label: 'Home', href: '/' },
+  { label: 'Best', href: '/best/' },
+  { label: title, href: Astro.url.pathname },
+];
+const lastUpdated = updatedAt ? new Date(updatedAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '2024';
+const site = import.meta.env.SITE ?? 'https://deckpilot.app';
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: breadcrumbItems.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.label, item: `${site.replace(/\/$/, '')}${item.href}` })),
+};
+---
+
+<BaseLayout title={seoTitle} description={seoDesc}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  </Fragment>
+  <div class="py-8">
+    <Breadcrumbs items={breadcrumbItems} />
+
+    <!-- Hero -->
+    <div class="mb-12 max-w-3xl">
+      <h1 class="text-4xl md:text-5xl font-black text-slate-900 dark:text-white leading-tight tracking-tight mb-4">
+        {title}
+      </h1>
+      <p class="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
+        We tested 20+ tools to find the best AI presentation makers for speed, design, and professional results. Save hours of manual formatting and let AI handle the heavy lifting.
+      </p>
+      <div class="mt-4 flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400 flex-wrap">
+        <span class="flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">calendar_today</span>
+          Last updated: {lastUpdated}
+        </span>
+        <span class="w-1 h-1 bg-slate-300 dark:bg-slate-600 rounded-full" aria-hidden="true"></span>
+        <span class="flex items-center gap-1">
+          <span class="material-symbols-outlined text-sm">history_edu</span>
+          Reviewed by Editorial Team
+        </span>
+      </div>
+    </div>
+
+    <AffiliateDisclosureInline />
+
+    <!-- Quick Verdict: Top Picks -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+        <span class="material-symbols-outlined text-primary">verified</span>
+        Quick Verdict: Top Picks
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {toolsList.slice(0, 3).map((tool, index) => (
+          <article class="bg-white dark:bg-slate-900 p-6 rounded-xl shadow-sm border border-slate-100 dark:border-slate-800 relative overflow-hidden group">
+            {index === 0 && (
+              <div class="absolute top-0 right-0 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg tracking-wider">
+                EDITOR'S CHOICE
+              </div>
+            )}
+            <div class="mb-4 aspect-video rounded-lg bg-slate-100 dark:bg-slate-800 overflow-hidden flex items-center justify-center">
+              {tool.screenshot ? (
+                <img src={tool.screenshot} alt={tool.name} class="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+              ) : (
+                <span class="material-symbols-outlined text-5xl text-slate-400">slideshow</span>
+              )}
+            </div>
+            <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">{index + 1}. {tool.name}</h3>
+            {tool.rating != null && (
+              <div class="flex items-center gap-1 mb-2">
+                <RatingStars rating={tool.rating} />
+                <span class="text-xs font-bold text-slate-500 ml-1">{tool.rating}</span>
+              </div>
+            )}
+            <p class="text-slate-600 dark:text-slate-400 text-sm mb-6 leading-relaxed">{tool.shortDesc}</p>
+            <CTAButton affiliateKey={tool.key} label={`Visit ${tool.name}`} />
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- At-a-Glance Comparison -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">At-a-Glance Comparison</h2>
+      <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
+        <ComparisonTable headers={tableHeaders} rows={tableRows} />
+      </div>
+    </section>
+
+    <!-- Full ranking -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6">Full ranking</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {toolsList.map((tool, index) => (
+          <article class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-4 shadow-sm flex justify-between items-start gap-4">
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="bg-primary text-white text-[10px] font-black uppercase px-2 py-1 rounded-full">#{index + 1}</span>
+                <h3 class="font-bold text-lg text-slate-900 dark:text-white">{tool.name}</h3>
+              </div>
+              {tool.rating != null && (
+                <div class="flex items-center gap-1 mb-1">
+                  <RatingStars rating={tool.rating} />
+                  <span class="text-xs font-bold text-slate-500">{tool.rating}</span>
+                </div>
+              )}
+              <p class="text-slate-600 dark:text-slate-400 text-sm">{tool.shortDesc}</p>
+            </div>
+            <CTAButton affiliateKey={tool.key} label={`Try ${tool.name}`} />
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="mb-10">
+      <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">FAQ</h2>
+      <FAQ items={faqItems} />
+    </section>
+
+    <footer class="pt-8 border-t border-slate-200 dark:border-slate-800">
+      <AffiliateDisclosureInline />
+    </footer>
+  </div>
+</BaseLayout>

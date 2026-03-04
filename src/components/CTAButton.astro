@@ -1,0 +1,25 @@
+---
+import { resolveCtaHref } from '../data/affiliates';
+import { getToolByKey } from '../data/tools';
+
+type Props = {
+  affiliateKey: string;
+  label: string;
+  /** Fallback URL when affiliate is not in mapping (e.g. tool website). */
+  fallbackUrl?: string;
+};
+
+const { affiliateKey, label, fallbackUrl } = Astro.props;
+const tool = getToolByKey(affiliateKey);
+const href = resolveCtaHref(affiliateKey, fallbackUrl ?? tool?.website ?? '#');
+---
+
+<a
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer sponsored"
+  class="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold py-3 px-5 rounded-xl shadow-lg shadow-primary/25 transition-colors"
+>
+  {label}
+  <span class="text-lg" aria-hidden="true">→</span>
+</a>

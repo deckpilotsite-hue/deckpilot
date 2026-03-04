@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const entries = (await getCollection('reviews')).sort(
+  (a, b) => b.data.updatedAt.valueOf() - a.data.updatedAt.valueOf()
+);
+---
+
+<BaseLayout title="Reviews – DeckPilot" description="In-depth reviews of AI presentation and pitch deck tools.">
+  <div class="max-w-4xl mx-auto px-4 py-10">
+    <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-6">Reviews</h1>
+    <div class="flex flex-col gap-4">
+      {entries.map((entry) => (
+        <PostCard
+          title={entry.data.title}
+          href={`/reviews/${entry.data.slug}/`}
+          description={entry.data.tagline}
+          date={entry.data.updatedAt.toISOString().slice(0, 10)}
+        />
+      ))}
+    </div>
+  </div>
+</BaseLayout>

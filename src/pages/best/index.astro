@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+const bestEntries = (await getCollection('best')).sort(
+  (a, b) => b.data.updatedAt.valueOf() - a.data.updatedAt.valueOf()
+);
+---
+
+<BaseLayout title="Best Of – DeckPilot" description="Our best-of lists for AI presentation tools by category.">
+  <div class="max-w-4xl mx-auto px-4 py-10">
+    <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-6">Best Of</h1>
+    <div class="flex flex-col gap-4">
+      {bestEntries.map((entry) => (
+        <PostCard
+          title={entry.data.title}
+          href={`/${entry.data.slug}/`}
+          date={entry.data.updatedAt.toISOString().slice(0, 10)}
+        />
+      ))}
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,66 @@
+---
+const currentYear = new Date().getFullYear();
+const platformLinks = [
+  { label: 'Tools Directory', href: '/tools/' },
+  { label: 'Expert Reviews', href: '/reviews/' },
+  { label: 'Comparison Tool', href: '/compare/' },
+];
+const companyLinks = [
+  { label: 'About Us', href: '/about/' },
+  { label: 'Contact', href: '/contact/' },
+];
+const legalLinks = [
+  { label: 'Privacy Policy', href: '/privacy/' },
+  { label: 'Affiliate Disclosure', href: '/affiliate-disclosure/' },
+];
+---
+
+<footer class="bg-slate-50 dark:bg-background-dark/50 border-t border-slate-200 dark:border-slate-800 py-12">
+  <div class="max-w-[1200px] mx-auto px-6">
+    <div class="flex flex-col md:flex-row justify-between items-start gap-12">
+      <div class="max-w-xs">
+        <a href="/" class="flex items-center gap-2 mb-4">
+          <span class="size-6 bg-primary rounded flex items-center justify-center text-white" aria-hidden="true">
+            <span class="material-symbols-outlined text-xs">rocket_launch</span>
+          </span>
+          <span class="text-lg font-black text-slate-900 dark:text-white">DeckPilot</span>
+        </a>
+        <p class="text-slate-500 dark:text-slate-400 text-sm">Your trusted compass in the software landscape. Making decision making easy since 2020.</p>
+      </div>
+      <nav class="grid grid-cols-2 lg:grid-cols-4 gap-12" aria-label="Footer links">
+        <div class="space-y-4">
+          <h5 class="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-widest">Platform</h5>
+          <ul class="space-y-2 text-sm text-slate-500 dark:text-slate-400">
+            {platformLinks.map((link) => (
+              <li><a href={link.href} class="hover:text-primary transition-colors">{link.label}</a></li>
+            ))}
+          </ul>
+        </div>
+        <div class="space-y-4">
+          <h5 class="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-widest">Company</h5>
+          <ul class="space-y-2 text-sm text-slate-500 dark:text-slate-400">
+            {companyLinks.map((link) => (
+              <li><a href={link.href} class="hover:text-primary transition-colors">{link.label}</a></li>
+            ))}
+          </ul>
+        </div>
+        <div class="space-y-4">
+          <h5 class="font-bold text-slate-900 dark:text-white text-sm uppercase tracking-widest">Legal</h5>
+          <ul class="space-y-2 text-sm text-slate-500 dark:text-slate-400">
+            {legalLinks.map((link) => (
+              <li><a href={link.href} class="hover:text-primary transition-colors">{link.label}</a></li>
+            ))}
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400 dark:text-slate-500 font-medium">
+      <p>© {currentYear} DeckPilot. All rights reserved.</p>
+      <div class="flex items-center gap-6">
+        <a href="#" class="hover:text-slate-600 dark:hover:text-slate-300">Twitter</a>
+        <a href="#" class="hover:text-slate-600 dark:hover:text-slate-300">LinkedIn</a>
+        <a href="#" class="hover:text-slate-600 dark:hover:text-slate-300">YouTube</a>
+      </div>
+    </div>
+  </div>
+</footer>

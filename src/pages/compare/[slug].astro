@@ -1,0 +1,156 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import RatingStars from '../../components/RatingStars.astro';
+import CTAButton from '../../components/CTAButton.astro';
+import { getCollection, render } from 'astro:content';
+import { getToolsByKeys } from '../../data/tools';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('comparisons');
+  return entries.map((e) => ({ params: { slug: e.data.slug }, props: { entry: e } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, toolAKey, toolBKey, verdict } = entry.data;
+const seoTitle = entry.data.seo?.title ?? `${title} – DeckPilot`;
+const seoDesc = entry.data.seo?.description ?? verdict ?? undefined;
+const tools = getToolsByKeys([toolAKey, toolBKey]);
+const [toolA, toolB] = tools;
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Compare', href: '/compare/' },
+  { label: title, href: Astro.url.pathname },
+];
+const site = import.meta.env.SITE ?? 'https://deckpilot.app';
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: breadcrumbs.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.label, item: `${site.replace(/\/$/, '')}${item.href}` })),
+};
+const specRows = [
+  { label: 'Pricing', icon: 'payments', a: toolA?.pricingText ?? '—', b: toolB?.pricingText ?? '—' },
+  { label: 'Rating', icon: 'star', ratingA: toolA?.rating, ratingB: toolB?.rating },
+  { label: 'Summary', icon: 'description', a: toolA?.shortDesc ?? '—', b: toolB?.shortDesc ?? '—' },
+];
+---
+
+<BaseLayout title={seoTitle} description={seoDesc}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  </Fragment>
+  <div class="py-12 lg:py-20">
+    <Breadcrumbs items={breadcrumbs} />
+
+    <!-- Hero -->
+    <section class="mb-16 text-center max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-wider mb-6">
+        <span class="material-symbols-outlined text-sm">compare_arrows</span>
+        2024 Comparison
+      </div>
+      <h1 class="text-5xl lg:text-6xl font-black tracking-tight text-slate-900 dark:text-white mb-6 leading-[1.1]">
+        {title.split(/ vs /i).length >= 2 ? (
+          <>{title.split(/ vs /i)[0]} vs <span class="text-slate-400">{title.split(/ vs /i)[1]}</span></>
+        ) : (
+          title
+        )}
+      </h1>
+      <p class="text-xl text-slate-600 dark:text-slate-400 leading-relaxed">
+        {verdict ?? `Which AI presentation maker is right for your workflow? We've broken down the key differences.`}
+      </p>
+    </section>
+
+    <!-- Mobile: tool toggle -->
+    <div class="lg:hidden sticky top-[4rem] z-40 py-4 bg-background-light dark:bg-background-dark">
+      <div class="flex h-12 rounded-xl bg-slate-200 dark:bg-slate-800 p-1" role="tablist">
+        <a href="#specs" class="flex flex-1 items-center justify-center rounded-lg px-2 py-2 bg-white dark:bg-slate-700 shadow-sm text-primary font-semibold text-sm">
+          {toolA?.name ?? 'A'}
+        </a>
+        <a href="#specs" class="flex flex-1 items-center justify-center rounded-lg px-2 py-2 text-slate-500 dark:text-slate-400 text-sm font-semibold">
+          {toolB?.name ?? 'B'}
+        </a>
+      </div>
+    </div>
+
+    <!-- Key Specifications: desktop table -->
+    <section id="specs" class="mb-20">
+      <div class="flex items-center gap-3 mb-8 px-2">
+        <span class="material-symbols-outlined text-primary">analytics</span>
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Key Specifications</h2>
+      </div>
+      <div class="hidden md:block overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 dark:bg-slate-800/50">
+              <th class="p-6 text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 w-1/3">Feature</th>
+              <th class="p-6 border-b border-slate-200 dark:border-slate-800 w-1/3">
+                <div class="flex items-center gap-2">
+                  <span class="size-6 bg-primary rounded flex items-center justify-center text-white text-[10px] font-bold">{toolA?.name?.slice(0, 1) ?? 'A'}</span>
+                  <span class="text-lg font-bold text-primary">{toolA?.name ?? 'Tool A'}</span>
+                </div>
+              </th>
+              <th class="p-6 border-b border-slate-200 dark:border-slate-800 w-1/3">
+                <span class="text-lg font-bold text-slate-400">{toolB?.name ?? 'Tool B'}</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+            {specRows.map((row) => (
+              <tr>
+                <td class="p-6 font-medium text-slate-900 dark:text-slate-100">{row.label}</td>
+                <td class="p-6 text-slate-600 dark:text-slate-400">
+                  {row.ratingA != null ? <RatingStars rating={row.ratingA} /> : row.a}
+                </td>
+                <td class="p-6 text-slate-600 dark:text-slate-400">
+                  {row.ratingB != null ? <RatingStars rating={row.ratingB} /> : row.b}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Mobile: stacked cards -->
+      <div class="md:hidden space-y-3">
+        {specRows.map((row) => (
+          <div class="bg-white dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+            <div class="flex items-center gap-2 mb-2 text-primary">
+              <span class="material-symbols-outlined text-sm">{row.icon}</span>
+              <span class="text-xs font-bold uppercase tracking-wider">{row.label}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-[10px] text-slate-400 uppercase font-bold">{toolA?.name}</p>
+                {row.ratingA != null ? <RatingStars rating={row.ratingA} /> : <p class="text-sm font-bold text-slate-800 dark:text-slate-100">{row.a}</p>}
+              </div>
+              <div class="border-l border-slate-100 dark:border-slate-800 pl-4">
+                <p class="text-[10px] text-slate-400 uppercase font-bold">{toolB?.name}</p>
+                {row.ratingB != null ? <RatingStars rating={row.ratingB} /> : <p class="text-sm font-bold text-slate-800 dark:text-slate-100">{row.b}</p>}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="prose dark:prose-invert max-w-none mb-12">
+      <Content />
+    </section>
+
+    <section class="grid md:grid-cols-2 gap-8">
+      {toolA && (
+        <div class="flex flex-col gap-4">
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white">Try {toolA.name}</h3>
+          <CTAButton affiliateKey={toolA.key} label={`Try ${toolA.name}`} />
+        </div>
+      )}
+      {toolB && (
+        <div class="flex flex-col gap-4">
+          <h3 class="text-xl font-bold text-slate-900 dark:text-white">Try {toolB.name}</h3>
+          <CTAButton affiliateKey={toolB.key} label={`Try ${toolB.name}`} />
+        </div>
+      )}
+    </section>
+  </div>
+</BaseLayout>

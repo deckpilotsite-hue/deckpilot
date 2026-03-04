@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('guides');
+  return entries.map((e) => ({ params: { slug: e.data.slug }, props: { entry: e } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title } = entry.data;
+const seoTitle = entry.data.seo?.title ?? `${title} – DeckPilot`;
+const seoDesc = entry.data.seo?.description ?? undefined;
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Guides', href: '/guides/' },
+  { label: title, href: Astro.url.pathname },
+];
+const site = import.meta.env.SITE ?? 'https://deckpilot.app';
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: breadcrumbs.map((item, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: item.label,
+    item: `${site.replace(/\/$/, '')}${item.href}`,
+  })),
+};
+---
+
+<BaseLayout title={seoTitle} description={seoDesc}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  </Fragment>
+  <div class="max-w-4xl mx-auto px-4 py-10">
+    <Breadcrumbs items={breadcrumbs} />
+    <article>
+      <h1 class="text-3xl font-black text-slate-900 dark:text-white mt-4 mb-8">{title}</h1>
+      <section class="prose dark:prose-invert max-w-none">
+        <Content />
+      </section>
+    </article>
+  </div>
+</BaseLayout>

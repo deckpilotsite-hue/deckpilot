@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ProsCons from '../../components/ProsCons.astro';
+import RatingStars from '../../components/RatingStars.astro';
+import FAQ from '../../components/FAQ.astro';
+import CTAButton from '../../components/CTAButton.astro';
+import AffiliateDisclosureInline from '../../components/AffiliateDisclosureInline.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('reviews');
+  return entries.map((e) => ({ params: { slug: e.data.slug }, props: { entry: e } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const { title, toolName, tagline, rating, price, pros, cons, affiliateKey, ctaLabel, faq, bestFor } = entry.data;
+const seoTitle = entry.data.seo?.title ?? `${title} – DeckPilot`;
+const seoDesc = entry.data.seo?.description ?? tagline;
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Reviews', href: '/reviews/' },
+  { label: toolName, href: Astro.url.pathname },
+];
+const site = import.meta.env.SITE ?? 'https://deckpilot.app';
+const canonical = `${site.replace(/\/$/, '')}${Astro.url.pathname}`;
+const reviewSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Review',
+  itemReviewed: { '@type': 'SoftwareApplication', name: toolName, url: canonical },
+  reviewRating: { '@type': 'Rating', ratingValue: rating, bestRating: 5, worstRating: 0 },
+};
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: breadcrumbs.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.label, item: `${site.replace(/\/$/, '')}${item.href}` })),
+};
+---
+
+<BaseLayout title={seoTitle} description={seoDesc}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(reviewSchema)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  </Fragment>
+  <div class="py-12">
+    <Breadcrumbs items={breadcrumbs} />
+
+    <!-- Hero -->
+    <section class="grid lg:grid-cols-2 gap-12 items-center mb-20">
+      <div>
+        <div class="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-bold mb-6">
+          <span class="material-symbols-outlined text-sm">verified</span>
+          Expert Review 2024
+        </div>
+        <h1 class="text-5xl lg:text-6xl font-black text-slate-900 dark:text-white leading-tight mb-6">{title}</h1>
+        <div class="flex items-center gap-4 mb-8 flex-wrap">
+          <div class="flex items-center gap-1">
+            <RatingStars rating={rating} />
+          </div>
+          <span class="text-2xl font-bold text-slate-900 dark:text-white">{rating}/5</span>
+          <span class="text-slate-500 dark:text-slate-400 border-l border-slate-300 dark:border-slate-700 pl-4">{price}</span>
+        </div>
+        <p class="text-xl text-slate-600 dark:text-slate-400 leading-relaxed mb-10 max-w-xl">{tagline}</p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <CTAButton affiliateKey={affiliateKey} label={ctaLabel} />
+          <a href="#verdict" class="bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700 px-8 py-4 rounded-xl text-lg font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors inline-flex items-center justify-center">
+            Pros & Cons
+          </a>
+        </div>
+      </div>
+      <div class="relative hidden lg:block">
+        <div class="aspect-video rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 overflow-hidden shadow-2xl flex items-center justify-center">
+          <span class="material-symbols-outlined text-6xl text-primary/40">slideshow</span>
+        </div>
+      </div>
+    </section>
+
+    <AffiliateDisclosureInline />
+
+    {bestFor && bestFor.length > 0 && (
+      <section class="mb-20">
+        <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-6">Who is {toolName} for?</h2>
+        <ul class="grid sm:grid-cols-3 gap-6 text-left">
+          {bestFor.map((audience: string) => (
+            <li class="p-6 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+              <span class="material-symbols-outlined text-primary text-3xl mb-3">person</span>
+              <h3 class="font-bold mb-2 text-slate-900 dark:text-white">{audience}</h3>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+
+    <section class="prose dark:prose-invert max-w-none mb-20">
+      <Content />
+    </section>
+
+    <section id="verdict" class="mb-20">
+      <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-8">The Verdict: Pros & Cons</h2>
+      <ProsCons pros={pros} cons={cons} />
+    </section>
+
+    {faq && faq.length > 0 && (
+      <section class="mb-20">
+        <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-8">FAQ</h2>
+        <FAQ items={faq} />
+      </section>
+    )}
+
+    <div class="pt-8 border-t border-slate-200 dark:border-slate-800">
+      <AffiliateDisclosureInline />
+      <div class="mt-6">
+        <CTAButton affiliateKey={affiliateKey} label={ctaLabel} />
+      </div>
+    </div>
+  </div>
+</BaseLayout>

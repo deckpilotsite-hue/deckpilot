@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import CardGrid from '../../components/CardGrid.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { getEntry } from 'astro:content';
+import { tools } from '../../data/tools';
+
+const entry = await getEntry('categories', 'ai-presentation-tools');
+if (!entry) {
+  return Astro.redirect('/404');
+}
+const { title, intro, featuredPages } = entry.data;
+const seoTitle = entry.data.seo?.title ?? title;
+const seoDesc = entry.data.seo?.description ?? intro;
+const topTools = tools.filter((t) => t.categoryKeys.includes('ai-presentation-tools')).slice(0, 6);
+const breadcrumbItems = [{ label: 'Home', href: '/' }, { label: title, href: Astro.url.pathname }];
+const site = import.meta.env.SITE ?? 'https://deckpilot.app';
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: breadcrumbItems.map((item, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: item.label,
+    item: `${site.replace(/\/$/, '')}${item.href}`,
+  })),
+};
+---
+
+<BaseLayout title={seoTitle} description={seoDesc}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+  </Fragment>
+  <div class="max-w-4xl mx-auto px-4 py-10">
+    <Breadcrumbs items={breadcrumbItems} />
+    <h1 class="text-3xl font-black text-slate-900 dark:text-white mt-4 mb-6">{title}</h1>
+    <p class="text-slate-600 dark:text-slate-400 mb-8">{intro}</p>
+    <section class="mb-10">
+      <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-4">Start here</h2>
+      <ul class="flex flex-wrap gap-4">
+        {featuredPages.map((p) => (
+          <li>
+            <a href={p.href} class="text-[#4848e5] hover:underline font-medium">{p.label}</a>
+          </li>
+        ))}
+      </ul>
+    </section>
+    <section>
+      <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-4">Top tools</h2>
+      <CardGrid columns={3}>
+        {topTools.map((tool) => (
+          <ProductCard tool={tool} ctaLabel={`Try ${tool.name}`} affiliateKey={tool.key} />
+        ))}
+      </CardGrid>
+    </section>
+  </div>
+</BaseLayout>

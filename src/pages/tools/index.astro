@@ -1,0 +1,17 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CardGrid from '../../components/CardGrid.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { tools } from '../../data/tools';
+---
+
+<BaseLayout title="All Tools – DeckPilot" description="Browse all AI presentation and pitch deck tools we review.">
+  <div class="max-w-4xl mx-auto px-4 py-10">
+    <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-6">All Tools</h1>
+    <CardGrid columns={3}>
+      {tools.map((tool) => (
+        <ProductCard tool={tool} ctaLabel={`View ${tool.name}`} affiliateKey={tool.key} />
+      ))}
+    </CardGrid>
+  </div>
+</BaseLayout>

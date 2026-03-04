@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const entries = (await getCollection('alternatives')).sort(
+  (a, b) => b.data.updatedAt.valueOf() - a.data.updatedAt.valueOf()
+);
+---
+
+<BaseLayout title="Alternatives – DeckPilot" description="Find alternatives to your current AI presentation tool.">
+  <div class="max-w-4xl mx-auto px-4 py-10">
+    <h1 class="text-3xl font-black text-slate-900 dark:text-white mb-6">Alternatives</h1>
+    <div class="flex flex-col gap-4">
+      {entries.map((entry) => (
+        <PostCard
+          title={entry.data.title}
+          href={`/alternatives/${entry.data.slug}/`}
+          date={entry.data.updatedAt.toISOString().slice(0, 10)}
+        />
+      ))}
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,31 @@
+---
+type Props = {
+  /** Header row: first cell can be empty for row labels. */
+  headers: string[];
+  /** Rows: each row is an array of cell strings. */
+  rows: string[][];
+};
+
+const { headers, rows } = Astro.props;
+---
+
+<div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
+  <table class="w-full text-left text-sm">
+    <thead class="bg-slate-100 dark:bg-slate-800/50">
+      <tr>
+        {headers.map((h) => (
+          <th class="px-4 py-3 font-semibold text-slate-900 dark:text-white">{h}</th>
+        ))}
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map((row) => (
+        <tr class="border-t border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/30">
+          {row.map((cell) => (
+            <td class="px-4 py-3 text-slate-700 dark:text-slate-300">{cell}</td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
