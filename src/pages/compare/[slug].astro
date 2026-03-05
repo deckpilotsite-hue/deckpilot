@@ -29,7 +29,10 @@ const breadcrumbSchema = {
   '@type': 'BreadcrumbList',
   itemListElement: breadcrumbs.map((item, i) => ({ '@type': 'ListItem', position: i + 1, name: item.label, item: `${site.replace(/\/$/, '')}${item.href}` })),
 };
+const scoreA = toolA?.deckpilotScore != null ? `${toolA.deckpilotScore.overall.toFixed(1)}/10${toolA.deckpilotScore.valuePick ? ' · Value Pick' : ''}` : '—';
+const scoreB = toolB?.deckpilotScore != null ? `${toolB.deckpilotScore.overall.toFixed(1)}/10${toolB.deckpilotScore.valuePick ? ' · Value Pick' : ''}` : '—';
 const specRows = [
+  { label: 'DeckPilot Score', icon: 'analytics', a: scoreA, b: scoreB },
   { label: 'Pricing', icon: 'payments', a: toolA?.pricingText ?? '—', b: toolB?.pricingText ?? '—' },
   { label: 'Rating', icon: 'star', ratingA: toolA?.rating, ratingB: toolB?.rating },
   { label: 'Summary', icon: 'description', a: toolA?.shortDesc ?? '—', b: toolB?.shortDesc ?? '—' },

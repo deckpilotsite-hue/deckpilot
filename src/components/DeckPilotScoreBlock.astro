@@ -1,0 +1,50 @@
+---
+/**
+ * Renders DeckPilot Score: overall (X.Y/10), optional dimension list, Value Pick badge.
+ * Pass either toolKey (resolve from catalog) or score (raw DeckPilotScoreData).
+ */
+import { getToolByKey } from '../data/tools';
+import { DECKPILOT_SCORE_RUBRIC, type DeckPilotScoreData } from '../data/deckpilot-score';
+
+type Props = {
+  /** Resolve tool from catalog and use its deckpilotScore; ignored if score is set. */
+  toolKey?: string;
+  /** Use this score directly; takes precedence over toolKey. */
+  score?: DeckPilotScoreData;
+  /** When true, show the dimension breakdown list. Default false. */
+  showDimensions?: boolean;
+};
+
+const { toolKey, score: scoreProp, showDimensions = false } = Astro.props;
+
+const score: DeckPilotScoreData | undefined = scoreProp ?? (toolKey ? getToolByKey(toolKey)?.deckpilotScore : undefined);
+
+const overall = score?.overall;
+const dimensions = score?.dimensions;
+const valuePick = score?.valuePick === true;
+---
+
+{score != null && overall != null && (
+  <section class="deckpilot-score-block rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-6 mb-8" aria-label="DeckPilot Score">
+    <div class="flex flex-wrap items-center gap-4 mb-4">
+      <h2 class="text-lg font-bold text-slate-900 dark:text-white">DeckPilot Score</h2>
+      <span class="text-3xl font-black text-primary tabular-nums">{overall.toFixed(1)}<span class="text-xl font-semibold text-slate-500 dark:text-slate-400">/10</span></span>
+      {valuePick && (
+        <span class="inline-flex items-center gap-1 px-3 py-1 bg-primary/15 text-primary rounded-full text-sm font-bold">
+          <span class="material-symbols-outlined text-sm">savings</span>
+          Value Pick
+        </span>
+      )}
+    </div>
+    {showDimensions && dimensions && Object.keys(dimensions).length > 0 && (
+      <ul class="grid sm:grid-cols-2 gap-2 text-sm">
+        {DECKPILOT_SCORE_RUBRIC.filter((d) => dimensions[d.id] != null).map((d) => (
+          <li class="flex justify-between gap-4 text-slate-700 dark:text-slate-300">
+            <span>{d.label}</span>
+            <span class="font-semibold tabular-nums text-slate-900 dark:text-white">{dimensions[d.id]!.toFixed(1)}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+  </section>
+)}

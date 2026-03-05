@@ -6,7 +6,9 @@ import RatingStars from '../../components/RatingStars.astro';
 import FAQ from '../../components/FAQ.astro';
 import CTAButton from '../../components/CTAButton.astro';
 import AffiliateDisclosureInline from '../../components/AffiliateDisclosureInline.astro';
+import DeckPilotScoreBlock from '../../components/DeckPilotScoreBlock.astro';
 import { getCollection, render } from 'astro:content';
+import { getToolByKey } from '../../data/tools';
 
 export async function getStaticPaths() {
   const entries = await getCollection('reviews');
@@ -15,20 +17,22 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { title, toolName, tagline, rating, price, pros, cons, affiliateKey, ctaLabel, faq, bestFor } = entry.data;
-const seoTitle = entry.data.seo?.title ?? `${title} – DeckPilot`;
-const seoDesc = entry.data.seo?.description ?? tagline;
+const { title, toolKey, tagline, rating, price, pros, cons, affiliateKey, ctaLabel, faq, bestFor, seo } = entry.data;
+const tool = getToolByKey(toolKey);
+const toolDisplayName = tool?.name ?? toolKey;
+const seoTitle = seo.title;
+const seoDesc = seo.description;
 const breadcrumbs = [
   { label: 'Home', href: '/' },
   { label: 'Reviews', href: '/reviews/' },
-  { label: toolName, href: Astro.url.pathname },
+  { label: toolDisplayName, href: Astro.url.pathname },
 ];
 const site = import.meta.env.SITE ?? 'https://deckpilot.app';
 const canonical = `${site.replace(/\/$/, '')}${Astro.url.pathname}`;
 const reviewSchema = {
   '@context': 'https://schema.org',
   '@type': 'Review',
-  itemReviewed: { '@type': 'SoftwareApplication', name: toolName, url: canonical },
+  itemReviewed: { '@type': 'SoftwareApplication', name: toolDisplayName, url: canonical },
   reviewRating: { '@type': 'Rating', ratingValue: rating, bestRating: 5, worstRating: 0 },
 };
 const breadcrumbSchema = {
@@ -68,6 +72,11 @@ const breadcrumbSchema = {
             Pros & Cons
           </a>
         </div>
+        {tool?.deckpilotScore && (
+          <div class="mt-10">
+            <DeckPilotScoreBlock toolKey={toolKey} showDimensions />
+          </div>
+        )}
       </div>
       <div class="relative hidden lg:block">
         <div class="aspect-video rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 overflow-hidden shadow-2xl flex items-center justify-center">
@@ -80,7 +89,7 @@ const breadcrumbSchema = {
 
     {bestFor && bestFor.length > 0 && (
       <section class="mb-20">
-        <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-6">Who is {toolName} for?</h2>
+        <h2 class="text-3xl font-bold text-slate-900 dark:text-white mb-6">Who is {toolDisplayName} for?</h2>
         <ul class="grid sm:grid-cols-3 gap-6 text-left">
           {bestFor.map((audience: string) => (
             <li class="p-6 bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">

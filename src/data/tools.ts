@@ -3,6 +3,8 @@
  * Use `key` as the join key with content (e.g. review's toolName / affiliateKey).
  */
 
+import { computeDeckPilotScoreData, type DeckPilotScoreData } from './deckpilot-score.js';
+
 export type Tool = {
   key: string;
   name: string;
@@ -14,6 +16,7 @@ export type Tool = {
   screenshot?: string;
   tags?: string[];
   rating?: number;
+  deckpilotScore?: DeckPilotScoreData;
 };
 
 export const tools: Tool[] = [
@@ -26,6 +29,16 @@ export const tools: Tool[] = [
     categoryKeys: ['ai-presentation-tools'],
     rating: 4.4,
     tags: ['pitch deck', 'startup'],
+    deckpilotScore: computeDeckPilotScoreData({
+      'slide-quality-design': 8,
+      'editing-control-flexibility': 8,
+      'workflow-speed-ux': 7.5,
+      'export-ownership': 7,
+      'templates-brand-controls': 8,
+      'collaboration-team-features': 6.5,
+      'integrations-input-options': 7,
+      'pricing-value': 8.5,
+    }),
   },
   {
     key: 'gamma',
@@ -56,6 +69,16 @@ export const tools: Tool[] = [
     categoryKeys: ['ai-presentation-tools'],
     rating: 4.3,
     tags: ['storytelling', 'presentations'],
+  },
+  {
+    key: 'canva',
+    name: 'Canva',
+    website: 'https://www.canva.com',
+    pricingText: 'Free tier, Pro from $15/mo',
+    shortDesc: 'Magic Design for Presentations: AI-generated slide decks from prompts.',
+    categoryKeys: ['ai-presentation-tools'],
+    rating: 4.3,
+    tags: ['templates', 'design', 'magic-design'],
   },
 ];
 

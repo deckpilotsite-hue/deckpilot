@@ -17,8 +17,12 @@ const { title, featuredTools, updatedAt } = entry.data;
 const seoTitle = entry.data.seo?.title ?? title;
 const seoDesc = entry.data.seo?.description ?? undefined;
 const toolsList = getToolsByKeys(featuredTools);
-const tableHeaders = ['Tool', 'Pricing', 'Best for'];
-const tableRows = toolsList.map((t) => [t.name, t.pricingText, t.shortDesc]);
+const hasAnyScore = toolsList.some((t) => t.deckpilotScore != null);
+const tableHeaders = hasAnyScore ? ['Tool', 'DeckPilot Score', 'Pricing', 'Best for'] : ['Tool', 'Pricing', 'Best for'];
+const tableRows = toolsList.map((t) => {
+  const scoreCell = t.deckpilotScore != null ? `${t.deckpilotScore.overall.toFixed(1)}/10${t.deckpilotScore.valuePick ? ' · Value Pick' : ''}` : '—';
+  return hasAnyScore ? [t.name, scoreCell, t.pricingText, t.shortDesc] : [t.name, t.pricingText, t.shortDesc];
+});
 const faqItems = [
   { q: 'How do you pick the best tools?', a: 'We test each tool and rank by ease of use, value, and output quality.' },
   { q: 'Do you earn from recommendations?', a: 'We may earn a commission when you sign up through our links. See our affiliate disclosure.' },
@@ -89,7 +93,15 @@ const breadcrumbSchema = {
               )}
             </div>
             <h3 class="text-xl font-bold mb-2 text-slate-900 dark:text-white">{index + 1}. {tool.name}</h3>
-            {tool.rating != null && (
+            {tool.deckpilotScore != null && (
+              <div class="flex items-center gap-2 mb-2">
+                <span class="font-bold text-primary tabular-nums">{tool.deckpilotScore.overall.toFixed(1)}/10</span>
+                {tool.deckpilotScore.valuePick && (
+                  <span class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">Value Pick</span>
+                )}
+              </div>
+            )}
+            {tool.rating != null && tool.deckpilotScore == null && (
               <div class="flex items-center gap-1 mb-2">
                 <RatingStars rating={tool.rating} />
                 <span class="text-xs font-bold text-slate-500 ml-1">{tool.rating}</span>
@@ -121,10 +133,17 @@ const breadcrumbSchema = {
                 <span class="bg-primary text-white text-[10px] font-black uppercase px-2 py-1 rounded-full">#{index + 1}</span>
                 <h3 class="font-bold text-lg text-slate-900 dark:text-white">{tool.name}</h3>
               </div>
-              {tool.rating != null && (
-                <div class="flex items-center gap-1 mb-1">
-                  <RatingStars rating={tool.rating} />
-                  <span class="text-xs font-bold text-slate-500">{tool.rating}</span>
+              {(tool.deckpilotScore != null || tool.rating != null) && (
+                <div class="flex items-center gap-2 mb-1 flex-wrap">
+                  {tool.deckpilotScore != null && (
+                    <span class="font-bold text-primary tabular-nums text-sm">{tool.deckpilotScore.overall.toFixed(1)}/10</span>
+                  )}
+                  {tool.rating != null && (
+                    <div class="flex items-center gap-1">
+                      <RatingStars rating={tool.rating} />
+                      <span class="text-xs font-bold text-slate-500">{tool.rating}</span>
+                    </div>
+                  )}
                 </div>
               )}
               <p class="text-slate-600 dark:text-slate-400 text-sm">{tool.shortDesc}</p>

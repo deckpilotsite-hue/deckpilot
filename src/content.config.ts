@@ -4,8 +4,8 @@ import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
 const seoSchema = z.object({
-  title: z.string().optional(),
-  description: z.string().optional(),
+  title: z.string(),
+  description: z.string(),
 });
 
 const pages = defineCollection({
@@ -27,7 +27,7 @@ const reviews = defineCollection({
   schema: z.object({
     title: z.string(),
     slug: z.string(),
-    toolName: z.string(),
+    toolKey: z.string(),
     tagline: z.string(),
     publishedAt: z.coerce.date(),
     updatedAt: z.coerce.date(),
@@ -37,9 +37,9 @@ const reviews = defineCollection({
     cons: z.array(z.string()),
     bestFor: z.array(z.string()),
     affiliateKey: z.string(),
-    ctaLabel: z.string().default('Try it'),
+    ctaLabel: z.string(),
     faq: z.array(faqItemSchema).optional(),
-    seo: seoSchema.optional(),
+    seo: seoSchema,
   }),
 });
 
