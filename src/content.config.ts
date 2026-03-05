@@ -31,7 +31,6 @@ const reviews = defineCollection({
     tagline: z.string(),
     publishedAt: z.coerce.date(),
     updatedAt: z.coerce.date(),
-    rating: z.number().min(0).max(5),
     price: z.string(),
     pros: z.array(z.string()),
     cons: z.array(z.string()),

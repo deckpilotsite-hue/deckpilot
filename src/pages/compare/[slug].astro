@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import RatingStars from '../../components/RatingStars.astro';
 import CTAButton from '../../components/CTAButton.astro';
 import { getCollection, render } from 'astro:content';
 import { getToolsByKeys } from '../../data/tools';
@@ -34,7 +33,6 @@ const scoreB = toolB?.deckpilotScore != null ? `${toolB.deckpilotScore.overall.t
 const specRows = [
   { label: 'DeckPilot Score', icon: 'analytics', a: scoreA, b: scoreB },
   { label: 'Pricing', icon: 'payments', a: toolA?.pricingText ?? '—', b: toolB?.pricingText ?? '—' },
-  { label: 'Rating', icon: 'star', ratingA: toolA?.rating, ratingB: toolB?.rating },
   { label: 'Summary', icon: 'description', a: toolA?.shortDesc ?? '—', b: toolB?.shortDesc ?? '—' },
 ];
 ---
@@ -103,10 +101,10 @@ const specRows = [
               <tr>
                 <td class="p-6 font-medium text-slate-900 dark:text-slate-100">{row.label}</td>
                 <td class="p-6 text-slate-600 dark:text-slate-400">
-                  {row.ratingA != null ? <RatingStars rating={row.ratingA} /> : row.a}
+                  {row.a}
                 </td>
                 <td class="p-6 text-slate-600 dark:text-slate-400">
-                  {row.ratingB != null ? <RatingStars rating={row.ratingB} /> : row.b}
+                  {row.b}
                 </td>
               </tr>
             ))}
@@ -125,11 +123,11 @@ const specRows = [
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <p class="text-[10px] text-slate-400 uppercase font-bold">{toolA?.name}</p>
-                {row.ratingA != null ? <RatingStars rating={row.ratingA} /> : <p class="text-sm font-bold text-slate-800 dark:text-slate-100">{row.a}</p>}
+                <p class="text-sm font-bold text-slate-800 dark:text-slate-100">{row.a}</p>
               </div>
               <div class="border-l border-slate-100 dark:border-slate-800 pl-4">
                 <p class="text-[10px] text-slate-400 uppercase font-bold">{toolB?.name}</p>
-                {row.ratingB != null ? <RatingStars rating={row.ratingB} /> : <p class="text-sm font-bold text-slate-800 dark:text-slate-100">{row.b}</p>}
+                <p class="text-sm font-bold text-slate-800 dark:text-slate-100">{row.b}</p>
               </div>
             </div>
           </div>

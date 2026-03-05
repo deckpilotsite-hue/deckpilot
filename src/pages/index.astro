@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import RatingStars from '../components/RatingStars.astro';
 import AffiliateDisclosureInline from '../components/AffiliateDisclosureInline.astro';
 import { getCollection } from 'astro:content';
 import { tools, getToolByKey } from '../data/tools';
@@ -98,7 +97,7 @@ const latestReviews = reviews.slice(0, 3);
     <div class="grid lg:grid-cols-3 gap-8">
       {latestReviews.map((entry) => {
         const tool = getToolByKey(entry.data.slug);
-        const rating = entry.data.rating ?? tool?.rating ?? 0;
+        const score = tool?.deckpilotScore?.overall;
         return (
           <article class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl p-6 hover:shadow-xl hover:border-transparent transition-all group">
             <div class="flex items-center gap-4 mb-6">
@@ -111,10 +110,14 @@ const latestReviews = reviews.slice(0, 3);
               </div>
               <div>
                 <h4 class="font-bold text-xl text-slate-900 dark:text-white">{entry.data.title}</h4>
-                <div class="flex items-center gap-1 mt-0.5">
-                  <RatingStars rating={rating} />
-                  <span class="text-slate-400 dark:text-slate-500 text-xs ml-2 font-bold">({rating}/5)</span>
-                </div>
+                {score != null && (
+                  <div class="flex items-center gap-2 mt-0.5">
+                    <span class="text-primary font-bold tabular-nums">{score.toFixed(1)}/10</span>
+                    {tool?.deckpilotScore?.valuePick && (
+                      <span class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded">Value Pick</span>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
             <p class="text-slate-600 dark:text-slate-300 line-clamp-3 mb-6">{entry.data.tagline}</p>

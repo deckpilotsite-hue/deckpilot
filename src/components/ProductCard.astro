@@ -1,7 +1,6 @@
 ---
 import type { Tool } from '../data/tools';
 import { resolveCtaHref } from '../data/affiliates';
-import RatingStars from './RatingStars.astro';
 
 type Props = {
   tool: Tool;
@@ -20,9 +19,6 @@ const ctaHref = showCta ? resolveCtaHref(affiliateKey ?? tool.key, tool.website)
   <div class="flex flex-col gap-3">
     <h3 class="font-bold text-lg text-slate-900 dark:text-white">{tool.name}</h3>
     <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">{tool.shortDesc}</p>
-    {tool.rating != null && (
-      <RatingStars rating={tool.rating} />
-    )}
     <p class="text-sm font-medium text-slate-700 dark:text-slate-300">{tool.pricingText}</p>
     {showCta && (
       <a
