@@ -2,7 +2,6 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
 import ProsCons from '../../components/ProsCons.astro';
-import RatingStars from '../../components/RatingStars.astro';
 import FAQ from '../../components/FAQ.astro';
 import CTAButton from '../../components/CTAButton.astro';
 import AffiliateDisclosureInline from '../../components/AffiliateDisclosureInline.astro';
@@ -17,7 +16,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
-const { title, toolKey, tagline, rating, price, pros, cons, affiliateKey, ctaLabel, faq, bestFor, seo } = entry.data;
+const { title, toolKey, tagline, price, pros, cons, affiliateKey, ctaLabel, faq, bestFor, seo } = entry.data;
 const tool = getToolByKey(toolKey);
 const toolDisplayName = tool?.name ?? toolKey;
 const seoTitle = seo.title;
@@ -33,7 +32,6 @@ const reviewSchema = {
   '@context': 'https://schema.org',
   '@type': 'Review',
   itemReviewed: { '@type': 'SoftwareApplication', name: toolDisplayName, url: canonical },
-  reviewRating: { '@type': 'Rating', ratingValue: rating, bestRating: 5, worstRating: 0 },
 };
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
@@ -59,10 +57,9 @@ const breadcrumbSchema = {
         </div>
         <h1 class="text-5xl lg:text-6xl font-black text-slate-900 dark:text-white leading-tight mb-6">{title}</h1>
         <div class="flex items-center gap-4 mb-8 flex-wrap">
-          <div class="flex items-center gap-1">
-            <RatingStars rating={rating} />
-          </div>
-          <span class="text-2xl font-bold text-slate-900 dark:text-white">{rating}/5</span>
+          {tool?.deckpilotScore && (
+            <span class="text-2xl font-bold text-primary tabular-nums">{tool.deckpilotScore.overall.toFixed(1)}/10</span>
+          )}
           <span class="text-slate-500 dark:text-slate-400 border-l border-slate-300 dark:border-slate-700 pl-4">{price}</span>
         </div>
         <p class="text-xl text-slate-600 dark:text-slate-400 leading-relaxed mb-10 max-w-xl">{tagline}</p>

@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
-import RatingStars from '../../components/RatingStars.astro';
 import CTAButton from '../../components/CTAButton.astro';
 import ComparisonTable from '../../components/ComparisonTable.astro';
 import FAQ from '../../components/FAQ.astro';
@@ -101,12 +100,6 @@ const breadcrumbSchema = {
                 )}
               </div>
             )}
-            {tool.rating != null && tool.deckpilotScore == null && (
-              <div class="flex items-center gap-1 mb-2">
-                <RatingStars rating={tool.rating} />
-                <span class="text-xs font-bold text-slate-500 ml-1">{tool.rating}</span>
-              </div>
-            )}
             <p class="text-slate-600 dark:text-slate-400 text-sm mb-6 leading-relaxed">{tool.shortDesc}</p>
             <CTAButton affiliateKey={tool.key} label={`Visit ${tool.name}`} />
           </article>
@@ -133,16 +126,10 @@ const breadcrumbSchema = {
                 <span class="bg-primary text-white text-[10px] font-black uppercase px-2 py-1 rounded-full">#{index + 1}</span>
                 <h3 class="font-bold text-lg text-slate-900 dark:text-white">{tool.name}</h3>
               </div>
-              {(tool.deckpilotScore != null || tool.rating != null) && (
+              {tool.deckpilotScore != null && (
                 <div class="flex items-center gap-2 mb-1 flex-wrap">
                   {tool.deckpilotScore != null && (
                     <span class="font-bold text-primary tabular-nums text-sm">{tool.deckpilotScore.overall.toFixed(1)}/10</span>
-                  )}
-                  {tool.rating != null && (
-                    <div class="flex items-center gap-1">
-                      <RatingStars rating={tool.rating} />
-                      <span class="text-xs font-bold text-slate-500">{tool.rating}</span>
-                    </div>
                   )}
                 </div>
               )}
