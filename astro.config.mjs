@@ -9,6 +9,7 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://deckpilot.app',
   output: 'static',
+  trailingSlash: 'always',
 
   vite: {
     plugins: [tailwindcss()]

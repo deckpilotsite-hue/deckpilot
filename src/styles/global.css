@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@config "../../tailwind.config.js";
 
 /* Class-based dark mode per doc/design (add class="dark" to html) */
 @custom-variant dark (&:where(.dark, .dark *));

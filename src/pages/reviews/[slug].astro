@@ -21,13 +21,14 @@ const tool = getToolByKey(toolKey);
 const toolDisplayName = tool?.name ?? toolKey;
 const seoTitle = seo.title;
 const seoDesc = seo.description;
+const pathnameWithSlash = Astro.url.pathname.replace(/\/?$/, '/');
 const breadcrumbs = [
   { label: 'Home', href: '/' },
   { label: 'Reviews', href: '/reviews/' },
-  { label: toolDisplayName, href: Astro.url.pathname },
+  { label: toolDisplayName, href: pathnameWithSlash },
 ];
 const site = import.meta.env.SITE ?? 'https://deckpilot.app';
-const canonical = `${site.replace(/\/$/, '')}${Astro.url.pathname}`;
+const canonical = `${site.replace(/\/$/, '')}${pathnameWithSlash}`;
 const reviewSchema = {
   '@context': 'https://schema.org',
   '@type': 'Review',
