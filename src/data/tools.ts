@@ -15,7 +15,6 @@ export type Tool = {
   logo?: string;
   screenshot?: string;
   tags?: string[];
-  rating?: number;
   deckpilotScore?: DeckPilotScoreData;
 };
 
@@ -27,7 +26,6 @@ export const tools: Tool[] = [
     pricingText: 'Freemium, Pro from $12/mo',
     shortDesc: 'AI-powered pitch decks in minutes.',
     categoryKeys: ['ai-presentation-tools'],
-    rating: 4.4,
     tags: ['pitch deck', 'startup'],
     deckpilotScore: computeDeckPilotScoreData({
       'slide-quality-design': 8,
@@ -47,8 +45,17 @@ export const tools: Tool[] = [
     pricingText: 'Free tier, Pro from $8/mo',
     shortDesc: 'Create presentations and docs with AI.',
     categoryKeys: ['ai-presentation-tools'],
-    rating: 4.5,
     tags: ['presentations', 'collaboration'],
+    deckpilotScore: computeDeckPilotScoreData({
+      'slide-quality-design': 8.5,
+      'editing-control-flexibility': 8,
+      'workflow-speed-ux': 9,
+      'export-ownership': 7.5,
+      'templates-brand-controls': 8.5,
+      'collaboration-team-features': 8.5,
+      'integrations-input-options': 8,
+      'pricing-value': 8,
+    }),
   },
   {
     key: 'beautiful-ai',
@@ -57,8 +64,17 @@ export const tools: Tool[] = [
     pricingText: 'From $12/mo',
     shortDesc: 'Smart templates that design themselves.',
     categoryKeys: ['ai-presentation-tools'],
-    rating: 4.2,
     tags: ['templates', 'design'],
+    deckpilotScore: computeDeckPilotScoreData({
+      'slide-quality-design': 8.5,
+      'editing-control-flexibility': 7,
+      'workflow-speed-ux': 8,
+      'export-ownership': 7,
+      'templates-brand-controls': 8.5,
+      'collaboration-team-features': 7.5,
+      'integrations-input-options': 6.5,
+      'pricing-value': 7.5,
+    }),
   },
   {
     key: 'tome',
@@ -67,8 +83,17 @@ export const tools: Tool[] = [
     pricingText: 'Free tier, paid plans available',
     shortDesc: 'AI-generated narratives and presentations.',
     categoryKeys: ['ai-presentation-tools'],
-    rating: 4.3,
     tags: ['storytelling', 'presentations'],
+    deckpilotScore: computeDeckPilotScoreData({
+      'slide-quality-design': 8,
+      'editing-control-flexibility': 7,
+      'workflow-speed-ux': 8,
+      'export-ownership': 7,
+      'templates-brand-controls': 7.5,
+      'collaboration-team-features': 7,
+      'integrations-input-options': 6.5,
+      'pricing-value': 8,
+    }),
   },
   {
     key: 'canva',
@@ -77,8 +102,17 @@ export const tools: Tool[] = [
     pricingText: 'Free tier, Pro from $15/mo',
     shortDesc: 'Magic Design for Presentations: AI-generated slide decks from prompts.',
     categoryKeys: ['ai-presentation-tools'],
-    rating: 4.3,
     tags: ['templates', 'design', 'magic-design'],
+    deckpilotScore: computeDeckPilotScoreData({
+      'slide-quality-design': 8,
+      'editing-control-flexibility': 8,
+      'workflow-speed-ux': 8,
+      'export-ownership': 8,
+      'templates-brand-controls': 9,
+      'collaboration-team-features': 8,
+      'integrations-input-options': 8.5,
+      'pricing-value': 7.5,
+    }),
   },
 ];
 
